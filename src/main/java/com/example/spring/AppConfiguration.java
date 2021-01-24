@@ -1,10 +1,11 @@
-package com.example.spring.testing;
+package com.example.spring;
 
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,11 +21,11 @@ import java.util.Map;
 @Configuration
 @EnableJpaRepositories
 @ComponentScan("com.example.spring")
-public class IntegrationTestConfiguration {
+public class AppConfiguration {
 
     private final Environment environment;
 
-    public IntegrationTestConfiguration(Environment environment) {
+    public AppConfiguration(Environment environment) {
         this.environment = environment;
     }
 
@@ -45,6 +46,7 @@ public class IntegrationTestConfiguration {
     }
 
     @Bean
+    @DependsOn("flyway")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
@@ -54,7 +56,10 @@ public class IntegrationTestConfiguration {
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.example.spring");
         factory.setDataSource(dataSource);
-        factory.setJpaPropertyMap(Map.of("hibernate.format_sql", "true"));
+        factory.setJpaPropertyMap(Map.of(
+            "hibernate.format_sql", "true",
+            "hibernate.hbm2ddl.auto", "none"
+        ));
 
         return factory;
     }

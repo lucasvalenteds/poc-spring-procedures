@@ -1,5 +1,6 @@
 package com.example.spring.testing;
 
+import com.example.spring.AppConfiguration;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.output.MigrateResult;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +19,7 @@ import org.testcontainers.utility.DockerImageName;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @ExtendWith(SpringExtension.class)
-@SpringJUnitConfig(IntegrationTestConfiguration.class)
+@SpringJUnitConfig(AppConfiguration.class)
 @Testcontainers
 public abstract class IntegrationTest {
 
