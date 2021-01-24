@@ -15,6 +15,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,6 +24,33 @@ public class MainTest extends IntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Test
+    public void testPreparedStatementWithParameters() {
+        int johnId = getAccountId("John Smith");
+        int maryId = getAccountId("Mary Jane");
+        double johnInitialBalance = getAccountBalance(johnId);
+        double maryInitialBalance = getAccountBalance(maryId);
+        double amountToTransfer = 500d;
+
+        jdbcTemplate.call(connection -> {
+            CallableStatement statement = connection.prepareCall("CALL transfer(?, ?, ?)");
+            statement.setInt(1, maryId);
+            statement.setInt(2, johnId);
+            statement.setBigDecimal(3, BigDecimal.valueOf(amountToTransfer));
+            return statement;
+        }, List.of(
+            new SqlParameter("source", Types.INTEGER),
+            new SqlParameter("target", Types.INTEGER),
+            new SqlParameter("amount", Types.DECIMAL)
+        ));
+
+        double johnFinalBalance = getAccountBalance(johnId);
+        double maryFinalBalance = getAccountBalance(maryId);
+
+        assertEquals(johnFinalBalance, johnInitialBalance + amountToTransfer);
+        assertEquals(maryFinalBalance, maryInitialBalance - amountToTransfer);
+    }
 
     @Test
     public void testFailingToUsePreparedStatementWithNamedParameters() {
@@ -86,5 +114,18 @@ public class MainTest extends IntegrationTest {
         assertNotNull(accountId);
 
         return accountId;
+    }
+
+
+    private double getAccountBalance(int accountId) {
+        Double balance = jdbcTemplate.queryForObject(
+            "select balance from accounts where id = ?",
+            Double.class,
+            accountId
+        );
+
+        assertNotNull(balance);
+
+        return balance;
     }
 }
