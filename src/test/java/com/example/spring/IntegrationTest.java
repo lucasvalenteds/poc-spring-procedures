@@ -1,6 +1,5 @@
 package com.example.spring;
 
-import com.example.spring.AppConfiguration;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.output.MigrateResult;
 import org.junit.jupiter.api.BeforeAll;
