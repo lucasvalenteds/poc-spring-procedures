@@ -36,7 +36,7 @@ public abstract class IntegrationTest {
     }
 
     @BeforeAll
-    public static void beforeEach(ApplicationContext context) {
+    public static void beforeAll(ApplicationContext context) {
         Flyway flyway = context.getBean(Flyway.class);
         MigrateResult result = flyway.migrate();
         assertNotEquals(0, result.migrationsExecuted);
