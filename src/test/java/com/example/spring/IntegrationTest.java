@@ -1,4 +1,4 @@
-package com.example.spring.testing;
+package com.example.spring;
 
 import com.example.spring.AppConfiguration;
 import org.flywaydb.core.Flyway;

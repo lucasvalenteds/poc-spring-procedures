@@ -2,7 +2,6 @@ package com.example.spring;
 
 import com.example.spring.account.Account;
 import com.example.spring.account.AccountRepository;
-import com.example.spring.testing.IntegrationTest;
 import org.hibernate.testing.transaction.TransactionUtil;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
